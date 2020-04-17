@@ -68,6 +68,9 @@ export default {
                 data: this.form,
               }).then(res=>{
                 const {data} = res
+                // 通过this.$store.commit调用mutations的方法
+                this.$store.commit('user/setuserInfo', data)
+                // 这个值保存到vuex仓库中
                 // console.log(data)
               })
             }
