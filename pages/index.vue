@@ -66,6 +66,7 @@ export default {
   },
   methods: {
     handleTab(index){
+      // 判断是不是点击的是机票，如果是就跳转到指定页面
       if(index === 2){
         this.$router.push('/air')
       }
