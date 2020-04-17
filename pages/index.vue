@@ -66,6 +66,9 @@ export default {
   },
   methods: {
     handleTab(index){
+      if(index === 2){
+        this.$router.push('/air')
+      }
       this.current = index
     }
   }
