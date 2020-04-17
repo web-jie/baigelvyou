@@ -5,7 +5,7 @@
         :rules="rules" 
         class="form">
 
-        <el-form-item class="form-item">
+        <el-form-item class="form-item" prop="username">
             <el-input 
             placeholder="用户名/手机"
             type="username"
@@ -13,7 +13,7 @@
             </el-input>
         </el-form-item>
 
-        <el-form-item class="form-item">
+        <el-form-item class="form-item" prop="password">
             <el-input 
             placeholder="密码" 
             type="password"
@@ -41,8 +41,8 @@ export default {
         return {
             // 表单数据
             form: {
-              username: '',
-              password: ''
+              username: '13800138000',
+              password: '123456'
             },
             // 表单规则
             rules: {
@@ -58,7 +58,21 @@ export default {
     methods: {
         // 提交登录
         handleLoginSubmit(){
-           console.log(this.form)
+          // 判断element的表单验证是否通过, element的表单都有一个validate这个方法
+          this.$refs.form.validate((valid)=>{
+            if(valid){
+              // 如果表单验证通过的话执行这个代码
+              this.$axios({
+                url: "/accounts/login",
+                method: "post",
+                data: this.form,
+              }).then(res=>{
+                const {data} = res
+                // console.log(data)
+              })
+            }
+          })
+          
         }
     }
 }
