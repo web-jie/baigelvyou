@@ -61,17 +61,9 @@ export default {
           // 判断element的表单验证是否通过, element的表单都有一个validate这个方法
           this.$refs.form.validate((valid)=>{
             if(valid){
-              // 如果表单验证通过的话执行这个代码
-              this.$axios({
-                url: "/accounts/login",
-                method: "post",
-                data: this.form,
-              }).then(res=>{
-                const {data} = res
-                // 通过this.$store.commit调用mutations的方法
-                this.$store.commit('user/setuserInfo', data)
-                // 这个值保存到vuex仓库中
-                // console.log(data)
+              this.$store.dispatch('user/login',this.form).then(res=>{
+                this.$message.success('登录成功')
+                this.$router.path("/")
               })
             }
           })
