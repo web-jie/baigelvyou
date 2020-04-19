@@ -25,7 +25,8 @@ export const actions = {
     }).then(res => {
       const { data } = res
       // 通过store.commit调用mutations的方法
-      store.commit('user/setuserInfo', data)
+      store.commit('setuserInfo', data)
+      return data
     })
   }
 } 
