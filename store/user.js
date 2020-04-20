@@ -1,8 +1,13 @@
 // 储存数据的地方
-export const state = {
+// export const state = {
 
-  // 登录成功后接口返回的用户数据, 里面包含了token和用户的详细信息
-  userInfo: {}
+//   // 登录成功后接口返回的用户数据, 里面包含了token和用户的详细信息
+//   userInfo: {}
+// }
+export const state = () => {
+  return {
+      userInfo: {}
+  }
 }
 // 修改state中的数据 export const mutations = {}是固定的格式
 // store的数据不能直接修改，必须要使用mutations来修改
