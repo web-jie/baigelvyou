@@ -16,9 +16,9 @@ export const mutations = {
 }
 
 export const actions = {
-  login(store,data) {
+  login(store, data) {
     // 如果表单验证通过的话执行这个代码
-   return this.$axios({
+    return this.$axios({
       url: "/accounts/login",
       method: "post",
       data,
@@ -28,5 +28,31 @@ export const actions = {
       store.commit('setuserInfo', data)
       return data
     })
+  },
+  sendCaptcha(store, tel) {
+    return this.$axios({
+      url: "/captchas",
+      method: "POST",
+      // 电话号码
+      data: {
+        tel
+      }
+    }).then(res => {
+      const { code } = res.data;
+      return code
+    });
+  },
+  // 注册，注册接口调用成功后和登录的操作是一样
+  register(store, data) {
+    return this.$axios({
+      url: '/accounts/register',
+      method: "POST",
+      data
+    }).then(res => {
+      const { data } = res;
+      store.commit('setuserInfo', data)
+      return data
+    })
   }
+
 } 

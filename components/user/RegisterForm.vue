@@ -70,22 +70,24 @@ export default {
         this.$refs.form.validateField("username");
         return;
       }
-      this.$axios({
-        url: "/captchas",
-        method: "POST",
-        // 电话号码
-        data: {
-          tel: this.form.username
-        }
-      }).then(res => {
-        const { code } = res.data;
-        this.$message.success("验证码为" + code);
-      });
+      this.$store.dispatch('user/sendCaptcha',this.form.username).then((res)=>{
+      this.$message.success("验证码为" + res);
+
+      })
     },
 
     // 注册
     handleRegSubmit() {
-      console.log(this.form);
+      const {checkPassword, ...pers} = this.form
+      console.log(pers)
+      this.$refs.form.validate((valid)=>{
+        if(valid){
+          this.$store.dispatch('user/register',pers).then(res=>{
+            this.$message.success('恭喜你注册成功')
+            this.$router.push('/')
+          })
+        }
+      })
     }
   }
 };
