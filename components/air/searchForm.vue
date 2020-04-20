@@ -18,15 +18,17 @@
             <!-- 出发城市的输入框 -->
             <el-form-item label="出发城市">
                 <!-- fetch-suggestions：获取搜索建议，它的功能就是根据当前输入的关键字，发起请求，把请求的结果显示下拉列表中 -->
+                <!-- fetch-suggestions比较类似input事件，有监听作用，不过他可以把数据展示在下拉列表 -->
                 <!-- @select: 选中下拉列表某一项的时候触发的事件，通过参数获取到当前选中的那个选项 -->
                 <el-autocomplete
                     :fetch-suggestions="queryDepartSearch"
                     placeholder="请搜索出发城市"
                     @select="handleDepartSelect"
                     class="el-autocomplete"
+                    v-model="form.departCity"
                 ></el-autocomplete>
             </el-form-item>
-
+<!-- 到达城市的输入框 -->
             <el-form-item label="到达城市">
                 <el-autocomplete
                     :fetch-suggestions="queryDestSearch"
@@ -67,7 +69,11 @@ export default {
                 { icon: "iconfont icondancheng", name: "单程" },
                 { icon: "iconfont iconshuangxiang", name: "往返" }
             ],
-            currentTab: 0
+              currentTab: 0,
+            // 表单的数据
+            form: {
+                departCity: ""
+            }
         };
     },
     methods: {
@@ -75,8 +81,29 @@ export default {
         handleSearchTab(item, index) {},
         // 出发城市输入框获得焦点时触发
         // value 是选中的值，cb是回调函数，接收要展示的列表
+        // cb接收的参数有个固定的格式，参数必须是一个数组，并且数组是由对象组成的，还有对象必须要有value属性
         queryDepartSearch(value, cb) {
-            cb([{ value: 1 }, { value: 2 }, { value: 3 }]);
+            // // 如果value值空的，就不需要请求
+            if(!value){
+                return;
+            }
+            // 请求和value相关的城市
+            this.$axios({
+                url: "/airs/city",
+                params: {
+                    name: value
+                }
+            }).then(res => {
+                // data是城市的数组
+                const {data} = res.data;
+                // data的属性没有value属性，需要转换下
+                const newData = data.map(v => {
+                    v.value = v.name.replace("市", "");
+                    return v;
+                })
+                // cb是要请求成功之后才调用，因为在这里才可以拿到城市的数据
+                cb(newData)
+            })
         },
         // 目标城市输入框获得焦点时触发
         // value 是选中的值，cb是回调函数，接收要展示的列表
