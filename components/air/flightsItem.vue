@@ -1,7 +1,7 @@
 
 <template>
   <div class="flight-item">
-    <div>
+    <div @click="isShow = !isShow">
       <!-- 显示的机票信息 -->
       <el-row type="flex" align="middle" class="flight-info">
         <el-col :span="6">
@@ -34,7 +34,7 @@
         </el-col>
       </el-row>
     </div>
-    <div class="flight-recommend">
+    <div class="flight-recommend" v-show="isShow">
       <!-- 隐藏的座位信息列表 -->
       <el-row type="flex" justify="space-between" align="middle">
         <el-col :span="4">低价推荐</el-col>
@@ -66,6 +66,11 @@
 
 <script>
 export default {
+  data(){
+    return{
+      isShow: false
+    }
+  },
   props: {
     // 数据
     data: {
@@ -84,17 +89,21 @@ export default {
       // 转化字符串
       const end = arr.split(":"); // [12, 50] 字符串
       const start = dep.split(":"); // [10, 30] 字符串
-
+      // 如果到达时间的小时小于出发时间的小时，那么就表示到达时间是第二天
+      // 必须是飞行时间不能超过24小时，现实生活不存在这个条件
+      if (end[0] < start[0]) {
+        end[0] = +end[0] + 24;
+      }
       // 将其转化为分钟来计算
-      const dis = (end[0] * 60 + +end[1]) - (start[0]*60 + +start[1]);
+      const dis = end[0] * 60 + +end[1] - (start[0] * 60 + +start[1]);
       // 小时
 
-      const hours = Math.floor(dis / 60)
+      const hours = Math.floor(dis / 60);
 
       // 分
       const min = dis % 60;
 
-      return `${hours}时${min}分`
+      return `${hours}时${min}分`;
     }
   }
 };
