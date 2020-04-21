@@ -105,6 +105,23 @@ export default {
     };
   },
   methods: {
+    gitCities(value){
+      // 请求和value相关的城市
+      return this.$axios({
+        url: "/airs/city",
+        params: {
+          name: value
+        }
+      }).then(res => {
+        // data是城市的数组
+        const { data } = res.data;
+        // data的属性没有value属性，需要转换下
+        const newData = data.map(v => {
+          v.value = v.name.replace("市", "");
+          return v;
+        });
+      })
+    },
     // tab切换时触发
     handleSearchTab(item, index) {},
     // 出发城市输入框获得焦点时触发
@@ -118,20 +135,7 @@ export default {
        // 监听输入框有值的时候重新验证表单，可以消除掉红的报错信息
             this.$refs.form.validateField("departCity");
 
-      // 请求和value相关的城市
-      this.$axios({
-        url: "/airs/city",
-        params: {
-          name: value
-        }
-      }).then(res => {
-        // data是城市的数组
-        const { data } = res.data;
-        // data的属性没有value属性，需要转换下
-        const newData = data.map(v => {
-          v.value = v.name.replace("市", "");
-          return v;
-        });
+this.getCities(value).then(res=>{
         // 保存到data中，给blur事件使用, 失去焦点时候选中第一个
         this.departCities = newData;
         // cb是要请求成功之后才调用，因为在这里才可以拿到城市的数据
@@ -155,20 +159,21 @@ export default {
       // 监听输入框有值的时候重新验证表单，可以消除掉红的报错信息
             this.$refs.form.validateField("destCity");
 
-      // 请求和value相关的城市
-      this.$axios({
-        url: "/airs/city",
-        params: {
-          name: value
-        }
-      }).then(res => {
-        // data是城市的数组
-        const { data } = res.data;
-        // data的属性没有value属性，需要转换下
-        const newData = data.map(v => {
-          v.value = v.name.replace("市", "");
-          return v;
-        });
+      // // 请求和value相关的城市
+      // this.$axios({
+      //   url: "/airs/city",
+      //   params: {
+      //     name: value
+      //   }
+      // }).then(res => {
+      //   // data是城市的数组
+      //   const { data } = res.data;
+      //   // data的属性没有value属性，需要转换下
+      //   const newData = data.map(v => {
+      //     v.value = v.name.replace("市", "");
+      //     return v;
+      //   });
+      this.getCities(value).then(res=>{
         // 保存到data中，给blur事件使用, 失去焦点时候选中第一个
         this.destCities = newData;
         // cb是要请求成功之后才调用，因为在这里才可以拿到城市的数据
