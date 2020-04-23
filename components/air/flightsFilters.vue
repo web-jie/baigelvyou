@@ -84,7 +84,12 @@ export default {
   methods: {
     // 选择机场时候触发
     handleAirport(value) {
-      console.log(this.airport);
+      // arr是符合当前选中条件的航班数组
+      const arr = this.data.flights.filter(v => {
+        return v.org_airport_name === this.airport;
+      });
+      // 触发父组件传递过来的事件，主要功能是把航班数组传递回去给父组件
+      this.$emit("getData", arr);
     },
     // 选择出发时间时候触发
     handleFlightTimes(value) {
@@ -100,7 +105,14 @@ export default {
       this.$emit("getData", arr);
     },
     // 选择机型时候触发
-    handleAirSize(value) {},
+    handleAirSize(value) {
+      // arr是符合当前选中条件的航班数组
+      const arr = this.data.flights.filter(v => {
+        return v.plane_size === this.airSize;
+      });
+      // 触发父组件传递过来的事件，主要功能是把航班数组传递回去给父组件
+      this.$emit("getData", arr);
+    },
 
     // 撤销条件时候触发
     handleFiltersCancel() {}
