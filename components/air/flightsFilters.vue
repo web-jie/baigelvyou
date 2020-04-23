@@ -91,7 +91,14 @@ export default {
       console.log(this.flightTimes);
     },
     // 选择航空公司时候触发
-    handleCompany(value) {},
+    handleCompany(value) {
+      // arr是符合当前选中条件的航班数组
+      const arr = this.data.flights.filter(v => {
+        return v.airline_name === this.company;
+      });
+      // 触发父组件传递过来的事件，主要功能是把航班数组传递回去给父组件
+      this.$emit("getData", arr);
+    },
     // 选择机型时候触发
     handleAirSize(value) {},
 
