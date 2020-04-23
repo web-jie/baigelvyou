@@ -4,7 +4,7 @@
       <!-- 顶部过滤列表 -->
       <div class="flights-content">
         <!-- 过滤条件 -->
-        <FlightsFilters/>
+        <FlightsFilters :data="flightsData" />
 
         <!-- 航班头部布局 -->
         <FlightsListHead />
@@ -40,12 +40,16 @@
 import FlightsListHead from "@/components/air/flightsListHead.vue";
 // 机票航班列表
 import FlightsItem from "@/components/air/flightsItem.vue";
+// 机票过滤组件
+import FlightsFilters from "@/components/air/flightsFilters";
 export default {
   data() {
     return {
       // 总数据, 里面包含了info,flights,total,options属性
       flightsData: {
-        flights: []
+        info: {},
+        flights: [],
+        options: {}
       },
       // 这个属性专门用来存放切割出来的数组
       // dataList: [],
@@ -74,14 +78,14 @@ export default {
       this.total = this.flightsData.total;
     });
   },
-  computed:{
-    dataList(){
-            // 重新切割数组
+  computed: {
+    dataList() {
+      // 重新切割数组
       const arr = this.flightsData.flights.slice(
         (this.pageIndex - 1) * this.pageSize,
         this.pageIndex * this.pageSize
       );
-      return arr
+      return arr;
     }
   },
   methods: {
@@ -91,7 +95,6 @@ export default {
       this.pageSize = val;
       // 一般条数发生变化会回到第一页
       this.pageIndex = 1;
-
     },
     // 切换页数时候触发的事件
     handleCurrentChange(val) {
