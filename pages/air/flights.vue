@@ -101,7 +101,10 @@ export default {
   methods: {
     // 这个事件时传递给过滤的子组件用于获取过滤后的数组
     getData(arr) {
+      // arr是当前符合条件的数据
       this.flightsData.flights = arr;
+      // 重置下总条数
+            this.total = arr.length;
     },
     // 切换条数时候触发的事件
     handleSizeChange(val) {

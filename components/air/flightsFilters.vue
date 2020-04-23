@@ -93,7 +93,17 @@ export default {
     },
     // 选择出发时间时候触发
     handleFlightTimes(value) {
-      console.log(this.flightTimes);
+      // 假设 this.flightTimes等于 6,12
+      const time = this.flightTimes.split(","); // [6, 12]
+      // arr是符合当前选中条件的航班数组
+      const arr = this.data.flights.filter(v => {
+        // 每个航班的出发时间的小时
+        const current = v.dep_time.split(":")[0];
+        // 如果满足这个条件，就说这趟航班是满足条件的
+        return +time[0] <= +current && +current < +time[1];
+      });
+      // 触发父组件传递过来的事件，主要功能是把航班数组传递回去给父组件
+      this.$emit("getData", arr);
     },
     // 选择航空公司时候触发
     handleCompany(value) {
