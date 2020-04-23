@@ -10,7 +10,7 @@
         <FlightsListHead />
 
         <!-- 航班信息 -->
-        <FlightsItem v-for="(item,index) in dataList" :key="index" :data="item" />
+        <FlightsItem v-for="(item,index) in dataList" :key="`${pageIndex}-` +  index" :data="item" />
         <!-- size-change: 切换条数时候触发的事件 -->
         <!-- current-change：切换页数时候触发的事件 -->
         <!-- current-page：当前的页数 -->
