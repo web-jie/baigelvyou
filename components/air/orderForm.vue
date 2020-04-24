@@ -33,6 +33,7 @@
         <!-- 数据来自于后台，循环渲染保险的列表数据  -->
         <div class="insurance-item" v-for="(item, index) in detail.insurances" :key="index">
           <el-checkbox
+          :checked="false"
             @change="handleInsurances(item.id)"
             :label="`${item.type}：￥${item.price}/份×1  最高赔付${item.compensation}`"
             border
@@ -46,18 +47,18 @@
       <div class="contact">
         <el-form label-width="60px">
           <el-form-item label="姓名">
-            <el-input></el-input>
+            <el-input v-model="form.contactName"></el-input>
           </el-form-item>
 
           <el-form-item label="手机">
-            <el-input placeholder="请输入内容">
+            <el-input placeholder="请输入内容" v-model="form.contactPhone">
               <template slot="append">
                 <el-button @click="handleSendCaptcha">发送验证码</el-button>
               </template>
             </el-input>
           </el-form-item>
 
-          <el-form-item label="验证码">
+          <el-form-item label="验证码"  v-model="form.captcha">
             <el-input></el-input>
           </el-form-item>
         </el-form>
@@ -78,8 +79,8 @@ export default {
         contactPhone: "", // 联系人电话
         captcha: "", // 验证码这个参数接口文档漏掉了
         invoice: false, // 默认不需要发票
-        seat_xid: "",
-        air: ""
+        seat_xid: "", // 座位id   
+        air: "" // 航班id
       },
       // 机票的详细信息
       detail: {}
@@ -88,6 +89,9 @@ export default {
   mounted() {
     // 获取问号的参数
     const { id, seat_xid } = this.$route.query;
+    // 把航班id和座位赋值给表单
+        this.form.air = id;
+        this.form.seat_xid = seat_xid;
     // 根据航班的id和座位id请求当前机票的详细
     this.$axios({
       url: "/airs/" + id,
@@ -116,7 +120,16 @@ export default {
     },
 
     // 发送手机验证码
-    handleSendCaptcha() {},
+    handleSendCaptcha() {
+       if(this.form.contactPhone){
+                // 调用user里面actions的方法来发送手机验证码
+                this.$store.dispatch("user/sendCaptcha", this.form.contactPhone).then(code => {
+                    this.$message.success("验证码发送成功，模拟的验证码是:" + code);
+                })
+            }else{
+                alert("手机号码不能为空")
+            }
+    },
     // 点击保险的checkbox时候触发
     handleInsurances(id) {
       // 判断数组中是否已经包含了该id
