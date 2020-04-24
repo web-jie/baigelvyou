@@ -54,7 +54,15 @@
             </el-col>
             <el-col :span="5" class="price">￥{{item.settle_price}}</el-col>
             <el-col :span="3" class="choose-button">
-              <el-button type="warning" size="mini">选定</el-button>
+              <nuxt-link :to="{
+                path: `/air/order`,
+                query: {
+                  id: data.id,
+                  seat_xid: item.seat_xid
+                }
+                }">
+                <el-button type="warning" size="mini">选定</el-button>
+              </nuxt-link>
               <p>剩余：{{item.discount}}</p>
             </el-col>
           </el-row>
@@ -66,10 +74,10 @@
 
 <script>
 export default {
-  data(){
-    return{
+  data() {
+    return {
       isShow: false
-    }
+    };
   },
   props: {
     // 数据
