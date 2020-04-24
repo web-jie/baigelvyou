@@ -33,7 +33,7 @@
         <!-- 数据来自于后台，循环渲染保险的列表数据  -->
         <div class="insurance-item" v-for="(item, index) in detail.insurances" :key="index">
           <el-checkbox
-          :checked="false"
+            :checked="false"
             @change="handleInsurances(item.id)"
             :label="`${item.type}：￥${item.price}/份×1  最高赔付${item.compensation}`"
             border
@@ -58,8 +58,8 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item label="验证码"  v-model="form.captcha">
-            <el-input></el-input>
+          <el-form-item label="验证码">
+            <el-input  v-model="form.captcha"></el-input>
           </el-form-item>
         </el-form>
         <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
@@ -79,7 +79,7 @@ export default {
         contactPhone: "", // 联系人电话
         captcha: "", // 验证码这个参数接口文档漏掉了
         invoice: false, // 默认不需要发票
-        seat_xid: "", // 座位id   
+        seat_xid: "", // 座位id
         air: "" // 航班id
       },
       // 机票的详细信息
@@ -90,8 +90,8 @@ export default {
     // 获取问号的参数
     const { id, seat_xid } = this.$route.query;
     // 把航班id和座位赋值给表单
-        this.form.air = id;
-        this.form.seat_xid = seat_xid;
+    this.form.air = id;
+    this.form.seat_xid = seat_xid;
     // 根据航班的id和座位id请求当前机票的详细
     this.$axios({
       url: "/airs/" + id,
@@ -121,21 +121,23 @@ export default {
 
     // 发送手机验证码
     handleSendCaptcha() {
-       if(this.form.contactPhone){
-                // 调用user里面actions的方法来发送手机验证码
-                this.$store.dispatch("user/sendCaptcha", this.form.contactPhone).then(code => {
-                    this.$message.success("验证码发送成功，模拟的验证码是:" + code);
-                })
-            }else{
-                alert("手机号码不能为空")
-            }
+      if (this.form.contactPhone) {
+        // 调用user里面actions的方法来发送手机验证码
+        this.$store
+          .dispatch("user/sendCaptcha", this.form.contactPhone)
+          .then(code => {
+            this.$message.success("验证码发送成功，模拟的验证码是:" + code);
+          });
+      } else {
+        alert("手机号码不能为空");
+      }
     },
     // 点击保险的checkbox时候触发
     handleInsurances(id) {
       // 判断数组中是否已经包含了该id
       // 如果index大于-1就表示有id，反之就没有
       const index = this.form.insurances.indexOf(id);
-      console.log(index)
+      console.log(index);
       if (index > -1) {
         // 有该id就删除
         this.form.insurances.splice(index, 1);
@@ -146,7 +148,18 @@ export default {
     },
     // 提交订单
     handleSubmit() {
-      console.log(this.form)
+      // 创建订单
+      this.$axios({
+        url: "/airorders",
+        method: "POST",
+        headers: {
+          // 这里千万要注意Bearer 后面必须要有一个空格（基于JWT标准）
+          Authorization: `Bearer ` + this.$store.state.user.userInfo.token
+        },
+        data: this.form
+      }).then(res => {
+        this.$message.success("订单提交成功");
+      });
     }
   }
 };
