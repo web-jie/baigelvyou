@@ -207,6 +207,8 @@ export default {
     handleSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
+          // 保存数据到searchList中
+          this.$store.commit('air/setSearchList', this.form)
           // 路由跳转，path指定的路径，query属性指定的问号后面的参数
           // 如果是动态参数就使用params
           this.$router.push({

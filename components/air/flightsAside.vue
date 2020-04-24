@@ -22,25 +22,51 @@
 
         <div class="history">
             <h5>历史查询</h5>
-            <nuxt-link to="#">
+            <div v-for="(item, index) in $store.state.air.searchList" :key="index"
+            @click="handleClick(item)"
+            >
                 <el-row type="flex" 
                 justify="space-between" 
                 align="middle"
                 class="history-item">
                     <div class="air-info">
-                        <div class="to-from">广州 - 上海</div>
-                        <p>2019-06-16</p>
+                        <div class="to-from">{{item.departCity}} - {{item.destCity}}</div>
+                        <p>{{item.departDate}}</p>
                     </div>
                     <span>选择</span>
                 </el-row>
-            </nuxt-link>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+import moment from "moment"
 export default {
+mounted(){
+  // 由于组件加载问题，导致这里无法打印次数据
+  console.log(this.$store.state.air.searchList)
+},
+methods: {
+  handleClick(item){
+    // 复制一份数据出来
+    const data = {...item}
+    // 获取今天的时间
+    const today = moment().format("YYYY-MM-DD")
+    const _today = +today.replace(/-/g, "")
+    const _departDate = +data.departDate.replace(/-/g, "")
 
+    if(_departDate < _today){
+      data.departDate = today
+    }
+
+    // 跳转到当前点击页面
+    this.push({
+      path: "/air/flights",
+      query: data
+    })
+  }
+}
 }
 </script>
 
