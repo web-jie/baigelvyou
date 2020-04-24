@@ -44,7 +44,7 @@ import FlightsItem from "@/components/air/flightsItem.vue";
 // 机票过滤组件
 import FlightsFilters from "@/components/air/flightsFilters";
 // 添加侧边栏组件
-import FlightsAside from "@/components/air/flightsAside.vue"
+import FlightsAside from "@/components/air/flightsAside.vue";
 export default {
   data() {
     return {
@@ -79,18 +79,14 @@ export default {
   },
   mounted() {
     // 请求机票列表
-    this.$axios({
-      url: "/airs",
-      params: this.$route.query
-    }).then(res => {
-      // console.log(res)
-      this.flightsData = res.data;
-      // 备份一份起来, 这份不能被修改, 因为是引用类型内存地址是一样的所以需要拷贝一份
-      this.flightDataCache = { ...res.data };
-
-      // 总条数
-      this.total = this.flightsData.total;
-    });
+    this.fetchList();
+  },
+  watch: {
+    // 监视路由，如果路由发生改变就执行下方代码
+    $route() {
+      // 路由发生改变后请求数据
+      this.fetchList();
+    }
   },
   computed: {
     dataList() {
@@ -103,12 +99,28 @@ export default {
     }
   },
   methods: {
+    // 请求机票列表
+    fetchList() {
+      this.$axios({
+        url: "/airs",
+        params: this.$route.query
+      }).then(res => {
+        // console.log(res)
+        this.flightsData = res.data;
+        // 备份一份起来, 这份不能被修改, 因为是引用类型内存地址是一样的所以需要拷贝一份
+        this.flightDataCache = { ...res.data };
+
+        // 总条数
+        this.total = this.flightsData.total;
+      });
+    },
+
     // 这个事件时传递给过滤的子组件用于获取过滤后的数组
     getData(arr) {
       // arr是当前符合条件的数据
       this.flightsData.flights = arr;
       // 重置下总条数
-            this.total = arr.length;
+      this.total = arr.length;
     },
     // 切换条数时候触发的事件
     handleSizeChange(val) {
