@@ -5,7 +5,7 @@
       <OrderForm/>
 
       <!-- 侧边栏 -->
-      <div class="aside"></div>
+      <OrderAside/>
     </el-row>
   </div>
 </template>
@@ -13,12 +13,15 @@
 <script>
 // 引入订单列表
 import OrderForm from "@/components/air/orderForm";
+// 引入侧边栏组件
+import OrderAside from "@/components/air/orderAside"
 export default {
   data() {
     return {};
   },
   components: {
-    OrderForm
+    OrderForm,
+    OrderAside
   }
 };
 </script>
