@@ -68,6 +68,8 @@
         <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
       </div>
     </div>
+    <!-- 为了computed的allPirce能够执行，所以在这里渲染一下，但是不需要展示出来 -->
+    <span v-show="false">{{allPrice}}</span>
   </div>
 </template>
 
@@ -120,7 +122,37 @@ export default {
       }
     };
   },
+  computed: {
+    allPrice(){
+      if(!this.detail.seat_infos){
+        return 0
+      }
+      let price = 0;
+      // 加上单价和燃油费
+      // 单价
+      price += this.detail.seat_infos.org_settle_price
+      // 燃油费
+      price += this.detail.airport_tax_audlet
+      // 保险加入
+      this.form.insurances.forEach(v=>{
+        // 里面的循环
+        this.detail.insurances.forEach(item=>{
+          if(v == item.id){
+            price += item.price
+          }
+        })
+      })
+      price *= this.form.users.length
+// 将数据保存在store中的setAllPrice里面
+      this.$store.commit('air/setAllPrice',price)
+      // 把人数保存到里面
+      this.$store.commit('air/setPeople',this.form.users.length)
+      return price
+    }
+  },
   mounted() {
+
+
     // 获取问号的参数
     const { id, seat_xid } = this.$route.query;
     // 把航班id和座位赋值给表单
@@ -137,7 +169,7 @@ export default {
       // 把机票的信息保存到data,里面有保险和右侧栏需要展示的数据
       this.detail = res.data;
       // 把数据存到air中。
-      this.$store.commit('air/setflightData',this.detail)
+      this.$store.commit('air/setFlightData',this.detail)
     });
   },
   methods: {
