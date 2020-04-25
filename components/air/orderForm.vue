@@ -1,30 +1,33 @@
 <template>
   <div class="main">
     <div class="air-column">
-      <h2>剩机人</h2>
-      <el-form class="member-info">
+      <h2>乘机人</h2>
+      <el-form class="member-info" ref="form" :rules="rules" :model="form">
         <div class="member-info-item" v-for="(item,index) in form.users" :key="index">
-          <el-form-item label="乘机人类型">
-            <el-input placeholder="姓名" class="input-with-select" v-model="item.username">
-              <el-select slot="prepend" value="1" placeholder="请选择">
-                <el-option label="成人" value="1"></el-option>
-              </el-select>
-            </el-input>
-          </el-form-item>
+          <!-- 这个需要全部包起来，这样可以达到报错在下边 -->
+          <el-form-item prop="users">
+            <el-form-item label="乘机人类型">
+              <el-input placeholder="姓名" class="input-with-select" v-model="item.username">
+                <el-select slot="prepend" value="1" placeholder="请选择">
+                  <el-option label="成人" value="1"></el-option>
+                </el-select>
+              </el-input>
+            </el-form-item>
 
-          <el-form-item label="证件类型">
-            <el-input placeholder="证件号码" class="input-with-select" v-model="item.id">
-              <el-select slot="prepend" value="1" placeholder="请选择">
-                <el-option label="身份证" value="1" :checked="true"></el-option>
-              </el-select>
-            </el-input>
+            <el-form-item label="证件类型">
+              <el-input placeholder="证件号码" class="input-with-select" v-model="item.id">
+                <el-select slot="prepend" value="1" placeholder="请选择">
+                  <el-option label="身份证" value="1" :checked="true"></el-option>
+                </el-select>
+              </el-input>
+            </el-form-item>
+            <!-- 删除用户 -->
+            <span class="delete-user" @click="handleDeleteUser(index)">-</span>
           </el-form-item>
-          <!-- 删除用户 -->
-          <span class="delete-user" @click="handleDeleteUser(index)">-</span>
         </div>
-      </el-form>
 
-      <el-button class="add-member" type="primary" @click="handleAddUsers">添加乘机人</el-button>
+        <el-button class="add-member" type="primary" @click="handleAddUsers">添加乘机人</el-button>
+      </el-form>
     </div>
 
     <div class="air-column">
@@ -45,12 +48,12 @@
     <div class="air-column">
       <h2>联系人</h2>
       <div class="contact">
-        <el-form label-width="60px">
-          <el-form-item label="姓名">
+        <el-form label-width="80px" :model="form" :rules="rules" ref="form2">
+          <el-form-item label="姓名" prop="contactName">
             <el-input v-model="form.contactName"></el-input>
           </el-form-item>
 
-          <el-form-item label="手机">
+          <el-form-item label="手机" prop="contactPhone">
             <el-input placeholder="请输入内容" v-model="form.contactPhone">
               <template slot="append">
                 <el-button @click="handleSendCaptcha">发送验证码</el-button>
@@ -58,8 +61,8 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item label="验证码">
-            <el-input  v-model="form.captcha"></el-input>
+          <el-form-item label="验证码" prop="captcha">
+            <el-input v-model="form.captcha"></el-input>
           </el-form-item>
         </el-form>
         <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
@@ -71,6 +74,27 @@
 <script>
 export default {
   data() {
+    const validatorUser = (rule, value, callback) => {
+      // 假设验证为true，最后通过就使用callback跳出
+      let valid = true;
+      value.forEach(v => {
+        // 如果验证有一个不通过，后边就没必要在执行了
+        if (valid == false) return;
+
+        if (v.username.trim() === "") {
+          valid = false;
+          return callback(new Error("姓名不能为空"));
+        }
+        if (v.id.trim() === "") {
+          valid = false;
+          return callback(new Error("证件号码不能为空"));
+        }
+        // 如果验证通过就跳出并提交
+        if (valid) {
+          callback();
+        }
+      });
+    };
     return {
       form: {
         users: [{ username: "", id: "" }], // 乘机人
@@ -83,7 +107,17 @@ export default {
         air: "" // 航班id
       },
       // 机票的详细信息
-      detail: {}
+      detail: {},
+      // 验证用户数据
+      rules: {
+        users: [
+          // 自定义验证，validatorUser是个函数，在data中定义过。
+          { validator: validatorUser, trigeer: "blur" }
+        ],
+        contactName: [{ required: true, message: "联系人不能为空" }],
+        contactPhone: [{ required: true, message: "联系人电话不能为空" }],
+        captcha: [{ required: true, message: "验证码不能为空" }]
+      }
     };
   },
   mounted() {
@@ -148,17 +182,23 @@ export default {
     },
     // 提交订单
     handleSubmit() {
-      // 创建订单
-      this.$axios({
-        url: "/airorders",
-        method: "POST",
-        headers: {
-          // 这里千万要注意Bearer 后面必须要有一个空格（基于JWT标准）
-          Authorization: `Bearer ` + this.$store.state.user.userInfo.token
-        },
-        data: this.form
-      }).then(res => {
-        this.$message.success("订单提交成功");
+      this.$refs.form.validate(valid1 => {
+        this.$refs.form2.validate(valid2 => {
+          if (valid1 && valid2) {
+            // 创建订单
+            this.$axios({
+              url: "/airorders",
+              method: "POST",
+              headers: {
+                // 这里千万要注意Bearer 后面必须要有一个空格（基于JWT标准）
+                Authorization: `Bearer ` + this.$store.state.user.userInfo.token
+              },
+              data: this.form
+            }).then(res => {
+              this.$message.success("订单提交成功");
+            });
+          }
+        });
       });
     }
   }
