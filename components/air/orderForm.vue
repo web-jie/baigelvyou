@@ -136,6 +136,8 @@ export default {
     }).then(res => {
       // 把机票的信息保存到data,里面有保险和右侧栏需要展示的数据
       this.detail = res.data;
+      // 把数据存到air中。
+      this.$store.commit('air/setflightData',this.detail)
     });
   },
   methods: {
@@ -171,7 +173,6 @@ export default {
       // 判断数组中是否已经包含了该id
       // 如果index大于-1就表示有id，反之就没有
       const index = this.form.insurances.indexOf(id);
-      console.log(index);
       if (index > -1) {
         // 有该id就删除
         this.form.insurances.splice(index, 1);

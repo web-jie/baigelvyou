@@ -5,7 +5,7 @@
       <OrderForm/>
 
       <!-- 侧边栏 -->
-      <OrderAside/>
+      <OrderAside :data="$store.state.air.flightDate"/>
     </el-row>
   </div>
 </template>
