@@ -27,7 +27,19 @@
 
 <script>
 export default {
-    
+    mounted(){
+        setTimeout(() => {
+            // 请求订单订单详情
+            this.$axios({
+                url: "/airorders/" + this.$route.query.id,
+                headers: {
+                    Authorization: `Bearer ` + this.$store.state.user.userInfo.token
+                }
+            }).then(res => {
+                console.log(res)
+            })
+        }, 0)
+    }
 }
 </script>
 
