@@ -30,6 +30,8 @@
             </el-form-item>
           </el-form>
         </div>
+        <!-- 显示路线规划的面板， 不要在这个div里面加内容 -->
+        <div id="panel"></div>
       </el-col>
     </el-row>
     <el-row>
@@ -88,7 +90,8 @@ export default {
     handleDriving() {
       AMap.plugin("AMap.Driving", () => {
         var driving = new AMap.Driving({
-          map: this.map
+          map: this.map,
+          panel: "panel"
         });
 
         var points = [
@@ -103,6 +106,14 @@ export default {
     },
     // 点击查询按钮，开始查询路线
     handleSearch() {
+      // 在开始规划路线之前呢，先清除掉地图上的其他内容
+      this.map = new AMap.Map("container", {
+        zoom: 11, //级别
+        center: [113.3245904, 23.1066805] //中心点坐标
+      });
+      // 清空panel路线规划面板内容
+      document.querySelector("#panel").innerHTML = "";
+      // 查询驾车路线
       this.handleDriving();
     }
   }
@@ -113,5 +124,21 @@ export default {
 #container {
   width: 500px;
   height: 500px;
+}
+#panel {
+  background-color: white;
+  max-height: 250px;
+  overflow-y: auto;
+  width: 100%;
+}
+#panel .amap-call {
+  background-color: #009cf9;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+#panel .amap-lib-driving {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  overflow: hidden;
 }
 </style>
