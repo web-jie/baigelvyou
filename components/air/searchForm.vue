@@ -121,7 +121,15 @@ export default {
       });
     },
     // tab切换时触发
-    handleSearchTab(item, index) {},
+    handleSearchTab(item, index) {
+      // 如果点击的是往返的按钮
+      if (index === 1) {
+        // 提示当前暂不支持往返机票
+        this.$alert("当前暂不支持往返机票", "提示", {
+          confirmButtonText: "确定"
+        });
+      }
+    },
 
     // 出发城市输入框获得焦点时触发
     // value 是选中的值，cb是回调函数，接收要展示的列表
@@ -195,12 +203,12 @@ export default {
     // 触发和目标城市切换时触发
     handleReverse() {
       // 交叉更换值
-      const {departCity,departCode,destCity,destCode} = this.form
-      this.form.departCity = destCity
-      this.form.departCode = destCode
+      const { departCity, departCode, destCity, destCode } = this.form;
+      this.form.departCity = destCity;
+      this.form.departCode = destCode;
 
-      this.form.destCity = departCity
-      this.form.destCode = departCode
+      this.form.destCity = departCity;
+      this.form.destCode = departCode;
     },
 
     // 提交表单是触发
@@ -208,7 +216,7 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           // 保存数据到searchList中
-          this.$store.commit('air/setSearchList', this.form)
+          this.$store.commit("air/setSearchList", this.form);
           // 路由跳转，path指定的路径，query属性指定的问号后面的参数
           // 如果是动态参数就使用params
           this.$router.push({
