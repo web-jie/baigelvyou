@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 文章插件 -->
-    <div class="post-item">
+    <div class="post-item" v-for="(item,index) in data" :key="index">
       <div class="post-cover">
         <a>
           <img
@@ -10,6 +10,7 @@
           />
         </a>
       </div>
+
       <div class="post-content">
         <h4 class="post-title">小蛮腰广州塔，怎么玩才不遗憾？</h4>
         <p
@@ -34,10 +35,26 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      data: []
+    };
+  },
+  mounted() {
+    this.$axios({
+      url: "/posts/recommend"
+    }).then(res => {
+      console.log(res);
+      const { data } = res.data;
+      this.data = data;
+    });
+  }
+};
 </script>
 
 <style lang="less" scoped>
+
 .post-item {
   padding: 20px 0;
   width: 100%;
@@ -53,7 +70,9 @@ export default {};
       cursor: pointer;
     }
   }
+
   .post-content {
+    margin: 20px 0;
     h4 {
       font-weight: 300;
       font-size: 16px;
@@ -92,7 +111,7 @@ export default {};
           padding-top: 3px;
         }
       }
-      .post-info-right{
+      .post-info-right {
         color: orange;
       }
     }

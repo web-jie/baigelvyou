@@ -119,4 +119,7 @@ export default {
     color: #ffa500;
   }
 }
+.post-list{
+  width: 100%;
+}
 </style>
