@@ -18,7 +18,7 @@
     <!-- 右侧组件 -->
     <div class="post-wrapper">
       <div class="search-wrapper">
-        <el-form ref="form" :model="form" label-width="0px">
+        <el-form ref="form" label-width="0px">
           <el-form-item>
             <el-input placeholder="请输入城市" suffix-icon="el-icon-search"></el-input>
           </el-form-item>
@@ -33,8 +33,23 @@
         </div>
         <div class="post-list">
           <!-- 文章组件 -->
-          <Article />
+          <!-- <Article :data="data" /> -->
+          <Plurticle :data="data" />
         </div>
+        <!-- size-change: 切换条数时候触发的事件 -->
+        <!-- current-change：切换页数时候触发的事件 -->
+        <!-- current-page：当前的页数 -->
+        <!-- page-size: 当前的条数 -->
+        <!-- total: 总条数 -->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageIndex"
+          :page-sizes="[3, 5, 7, 10]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        ></el-pagination>
       </div>
     </div>
   </div>
@@ -45,20 +60,42 @@
 import Recommend from "@/components/post/Recommend";
 // 右侧组件
 import Article from "@/components/post/Article";
+// 3个图片的组件
+import Plurticle from "@/components/post/plurticle";
 export default {
   data() {
     return {
+      data: [],
       hot: [
         { city: "广州" },
         { city: "上海" },
         { city: "北京" },
         { city: "杭州" }
-      ]
+      ],
+      // 当前页面
+      pageIndex:1,
+      // 当前显示的条数
+      pageSize: 5,
+      // 总条数
+      total: 0
     };
   },
   components: {
     Recommend,
-    Article
+    Article,
+    Plurticle
+  },
+  mounted() {
+   
+  },
+  methods: {
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    // 切换页面时触发
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+    }
   }
 };
 </script>
@@ -119,7 +156,10 @@ export default {
     color: #ffa500;
   }
 }
-.post-list{
+.post-list {
   width: 100%;
+}
+.el-pagination {
+  margin: 10px 0;
 }
 </style>

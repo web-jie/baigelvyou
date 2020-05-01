@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 文章插件 -->
-    <div class="post-item" v-for="(item,index) in data" :key="index">
+    <div class="post-item">
       <div class="post-cover">
         <a>
           <img
@@ -36,20 +36,11 @@
 
 <script>
 export default {
-  data() {
-    return {
-      data: []
-    };
-  },
-  mounted() {
-    this.$axios({
-      url: "/posts/recommend"
-    }).then(res => {
-      console.log(res);
-      const { data } = res.data;
-      this.data = data;
-    });
+data(){
+  return{
+    // props: [data]
   }
+}
 };
 </script>
 
@@ -60,6 +51,7 @@ export default {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid #ddd;
   .post-cover {
     padding-right: 10px;
@@ -74,16 +66,21 @@ export default {
   .post-content {
     margin: 20px 0;
     h4 {
-      font-weight: 300;
-      font-size: 16px;
+      font-weight: 400;
+      font-size: 18px;
       display: inline-block;
       padding: 10px 0;
+    }
+    h4:hover{
+      color: orange;
+      cursor: pointer;
     }
     .post-desc {
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 3;
       overflow: hidden;
+      cursor: pointer;
     }
     img {
       display: block;
